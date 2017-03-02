@@ -17,11 +17,22 @@ exports.handleRequest = function (req, res) {
     statusCode = 404;
   });
 
-  if (req.method === 'GET') {
+  if (req.url === '/') {
     statusCode = 200; 
     fs.readFile(archive.paths.index, function(err, data) {
       if (err) {
         throw err;
+      }
+      res.writeHead(statusCode, headers); 
+      res.end(data);
+
+    });
+  } else {
+    statusCode = 200; 
+   
+    fs.readFile(archive.paths.archivedSites + req.url, function(err, data) {
+      if (err) {
+        statusCode = 404;
       }
       res.writeHead(statusCode, headers); 
       res.end(data);
