@@ -82,7 +82,6 @@ exports.downloadUrls = function(urls) {
     exports.isUrlArchived(urlElement, function(boolean) {
       if (boolean === false) {
         fs.openSync(absPath, 'wx'); 
-        console.log('http://' + urlElement);
         request('http://' + urlElement).pipe(fs.createWriteStream(absPath));
       }
     });
