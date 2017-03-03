@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -40,18 +41,14 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
-  readListOfUrls(function(urlArray) {
-    console.log(urlArray);
-    urlArray.forEach(function(urlElement) {
-      console.log(urlElement, "ELEMENt");
-      if (urlElement === url) {
-        callback(true);
-        return;
-      }
-    });
-    callback(false);
+  
+  exports.readListOfUrls(function(urlArray) {
+    if (urlArray.indexOf(url) > -1 ) {
+      callback(true);
+    } else {
+      callback(false); 
+    }
   });
-  //callback we want to check if url === iterate through array
 };
 
 exports.addUrlToList = function(url, callback) {
@@ -64,7 +61,43 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
+  //check if archives/sites includes file name = url
+  fs.readdir(exports.paths.archivedSites, function(err, data) {
+    if (err) {
+      throw err;
+    }
+    if (data.indexOf(url) > -1) {
+      callback(true);     
+    } else {
+      callback(false);
+    }
+  });
+
 };
 
 exports.downloadUrls = function(urls) {
-};
+  //iterate over urls array
+  urls.forEach(function(urlElement) {
+    var absPath = exports.paths.archivedSites + '/' + urlElement;
+    exports.isUrlArchived(urlElement, function(boolean) {
+      if (boolean === false) {
+        fs.openSync(absPath, 'wx'); 
+        console.log('http://' + urlElement);
+        request('http://' + urlElement).pipe(fs.createWriteStream(absPath));
+      }
+    });
+  });
+}; 
+      
+      // var options = {
+      //   host: urlElement,
+      //   port: 80,
+      //   path: '/index.html'
+      // };
+
+
+    //pass in the element(url) into isUrlArchived(url, function(boolean))
+      //if boolean is not true
+        //create file with url as the name of that file
+        //some how get the html from that website
+        //fs.appendFile html source code

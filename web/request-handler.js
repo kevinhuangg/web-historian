@@ -67,7 +67,7 @@ exports.handleRequest = function (req, res) {
         if (err) {
           throw err;
         }
-        var array = data.toString().split('\n'); 
+        var array = data.toString().split('\n');
 
         if (array.indexOf(url.slice(4)) === -1) { //if we can't find it
           statusCode = 302;
