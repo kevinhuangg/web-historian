@@ -12,7 +12,7 @@ exports.handleRequest = function (req, res) {
   var statusCode;
 
   //declare variable to hold index.html data
-  var index = fs.readFileSync(archive.paths.index);
+
   //declare variable to hold loading.html data
   var loading = fs.readFileSync(archive.paths.loading);
   
@@ -38,9 +38,14 @@ exports.handleRequest = function (req, res) {
     statusCode = 200; 
     
     if (req.url === '/') { //if going to homepage
-
-      res.writeHead(statusCode, headers); 
-      res.end(index);
+      fs.readFile(archive.paths.index, function(err, data) {
+        if (err) {
+          throw err;
+        }
+        res.writeHead(statusCode, headers); 
+        // console.log(data);
+        res.end(data);
+      });
 
     } else { //if going directly to archived site
    
@@ -49,7 +54,7 @@ exports.handleRequest = function (req, res) {
           statusCode = 404;
         }
         res.writeHead(statusCode, headers); 
-        res.end(data);
+        res.end(data);  
       });  
 
     }
@@ -96,55 +101,4 @@ exports.handleRequest = function (req, res) {
 
 
 
-
-
-
-
-  // if (req.url === '/') {
-  //   statusCode = 200; 
-  //   // fs.readFile(archive.paths.index, function(err, data) {
-  //   //   if (err) {
-  //   //     throw err;
-  //   //   }
-
-  //   res.writeHead(statusCode, headers); 
-  //   res.end(index);
-
-  // } else if (req.method === 'GET'){ 
-  //   statusCode = 200; 
-   
-  //   fs.readFile(archive.paths.archivedSites + req.url, function(err, data) {
-  //     if (err) {
-  //       statusCode = 404;
-  //     }
-  //     res.writeHead(statusCode, headers); 
-  //     res.end(data)
-  //   }); 
-
-  // } else {
-  //   fs.readFile(archive.paths.list, function(err, data) {
-  //     if (err) {
-  //       throw err;
-  //     }
-  //     var array = data.toString().split('\n'); 
-  //     // console.log(array);
-  //     // console.log(req.url);
-  //     if (array.indexOf(req.url.slice(5)) === -1) {
-  //       //append url to sites.txt
-  //       // console.log('yup');
-  //       fs.appendFile(archive.paths.list, req.url.slice(5), 'a', function(err, data) {
-  //         if (err) {
-  //           throw err;
-  //         }
-  //         console.log('The url was appended to file!');
-  //       });
-  //       //redirect to loading.html
-  //       res.end(loading);
-  //     } else {
-  //       //redirect to 
-  //     }
-  //   }
-  // }
-      //if url is not in list
-        //write url into sites.txt
 
